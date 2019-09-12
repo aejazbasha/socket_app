@@ -7,31 +7,13 @@
 #include <arpa/inet.h>      // inet_addr
 #include <netdb.h>
 #include <unistd.h>
-#define MAX 80
+
+#define MAX 8
 #define PORT 8080
 #define SA struct sockaddr
-int sockfd, connfd;
-struct sockaddr_in servaddr, cli;
-void func(int sockfd)
-{
-	char buff[MAX];
-	int n;
-	for (;;) {
-		bzero(buff, sizeof(buff));
-		printf("Enter the string : ");
-		n = 0;
-		while ((buff[n++] = getchar()) != '\n')
-			;
-		write(sockfd, buff, sizeof(buff));
-		bzero(buff, sizeof(buff));
-		read(sockfd, buff, sizeof(buff));
-		printf("From Server : %s", buff);
-		if ((strncmp(buff, "exit", 4)) == 0) {
-			printf("Client Exit...\n");
-			break;
-		}
-	}
-}
+
+int sockfd;
+struct sockaddr_in servaddr;
 
 static void create_socket()
 {
@@ -71,13 +53,67 @@ void start_socket()
   connect_server();
 }
 
-int main()
+// void rollno(int sockfd)
+// {
+// 	char buff[MAX];
+// 	int n,i;
+// 	//for (i=0;i<5;i++) {
+// 	//for(; ;){
+// 		bzero(buff, sizeof(buff));
+// 		printf("Enter your rollno:\n");
+// 		n = 0;
+// 		while ((buff[n++] = getchar()) != '\n')
+// 			;
+// 		write(sockfd, buff, sizeof(buff));
+// 		bzero(buff, sizeof(buff));
+// 	//}
+// }
+
+void upload_rollno(int sockfd, int rollno)
+{
+	int ret;
+	char *temp;
+	int length;
+
+	//printf("result is: %d\n", result);
+
+	length = snprintf( NULL, 0, "%d", rollno);
+	temp = malloc(length+1);
+	snprintf(temp, length+1, "%d", rollno);
+
+	//itoa(result, temp, 10);
+	//sprintf(temp, result, 42);
+	ret = write(sockfd, temp, sizeof(temp));
+	//printf("return of write: %d\n", ret);
+	free(temp);
+}
+
+void upload_result(int sockfd, int result)
+{
+	int ret;
+	char *temp;
+	int length;
+
+	//printf("result is: %d\n", result);
+
+	length = snprintf( NULL, 0, "%d", result);
+	temp = malloc(length+1);
+	snprintf(temp, length+1, "%d", result);
+
+	//itoa(result, temp, 10);
+	//sprintf(temp, result, 42);
+	ret = write(sockfd, temp, sizeof(temp));
+	//printf("return of write: %d\n", ret);
+	free(temp);
+}
+
+int upload(int rollno, int result)
 {
   start_socket();
 
 	// function for chat
-	func(sockfd);
-
+	upload_rollno(sockfd, rollno);
+	upload_result(sockfd, result);
 	// close the socket
 	close(sockfd);
 }

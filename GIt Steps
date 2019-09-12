@@ -1,0 +1,12 @@
+1) git init
+2) git status
+3) git add file_name
+4) git commit -m "message"
+5) git config --global user.name "your-name"
+6) git config --global user.email "your-email@gmail.com"
+7) git log
+
+8) git pull github-repository-url
+9) git remote add default github-repository-url
+10) git push deafult
+ 

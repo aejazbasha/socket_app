@@ -1,0 +1,47 @@
+20:10:36 **** Build of configuration Debug for project srever ****
+make all 
+Building file: ../client.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"client.d" -MT"client.o" -o "client.o" "../client.c"
+../client.c: In function ‘upload_to_server’:
+../client.c:78:5: warning: implicit declaration of function ‘itoa’ [-Wimplicit-function-declaration]
+     itoa(result, final, 10);
+     ^
+Finished building: ../client.c
+ 
+Building file: ../main.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"main.d" -MT"main.o" -o "main.o" "../main.c"
+Finished building: ../main.c
+ 
+Building file: ../server.c
+Invoking: GCC C Compiler
+gcc -O0 -g3 -Wall -c -fmessage-length=0 -MMD -MP -MF"server.d" -MT"server.o" -o "server.o" "../server.c"
+../server.c: In function ‘accept_client_req’:
+../server.c:76:63: warning: pointer targets in passing argument 3 of ‘accept’ differ in signedness [-Wpointer-sign]
+     connectfd = accept(sockfd, (struct sockaddr*)&clientaddr, &clientlen);
+                                                               ^
+In file included from ../server.c:10:0:
+/usr/include/x86_64-linux-gnu/sys/socket.h:243:12: note: expected ‘socklen_t * restrict {aka unsigned int * restrict}’ but argument is of type ‘int *’
+ extern int accept (int __fd, __SOCKADDR_ARG __addr,
+            ^
+Finished building: ../server.c
+ 
+Building target: srever
+Invoking: GCC C Linker
+gcc  -o "srever"  ./client.o ./main.o ./server.o   
+./server.o: In function `create_socket':
+/home/aejaz/Desktop/socket/srever/Debug/../server.c:31: multiple definition of `create_socket'
+makefile:29: recipe for target 'srever' failed
+./client.o:/home/aejaz/Desktop/socket/srever/Debug/../client.c:18: first defined here
+./server.o: In function `function':
+/home/aejaz/Desktop/socket/srever/Debug/../server.c:105: multiple definition of `function'
+./client.o:/home/aejaz/Desktop/socket/srever/Debug/../client.c:50: first defined here
+./server.o: In function `main':
+/home/aejaz/Desktop/socket/srever/Debug/../server.c:145: multiple definition of `main'
+./main.o:/home/aejaz/Desktop/socket/srever/Debug/../main.c:6: first defined here
+./client.o: In function `upload_to_server':
+/home/aejaz/Desktop/socket/srever/Debug/../client.c:78: undefined reference to `itoa'
+collect2: error: ld returned 1 exit status
+make: *** [srever] Error 1
+"make all" terminated with exit code 2. Build might be incomplete.
