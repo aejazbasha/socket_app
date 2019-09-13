@@ -12,6 +12,18 @@
 #define PORT 8080
 #define SA struct sockaddr
 
+struct data
+{
+  int rollno;
+  int result;
+};
+
+// struct data_up
+// {
+//   char *rollno;
+//   char *result;
+// };
+
 int sockfd;
 struct sockaddr_in servaddr;
 
@@ -53,67 +65,36 @@ void start_socket()
   connect_server();
 }
 
-// void rollno(int sockfd)
-// {
-// 	char buff[MAX];
-// 	int n,i;
-// 	//for (i=0;i<5;i++) {
-// 	//for(; ;){
-// 		bzero(buff, sizeof(buff));
-// 		printf("Enter your rollno:\n");
-// 		n = 0;
-// 		while ((buff[n++] = getchar()) != '\n')
-// 			;
-// 		write(sockfd, buff, sizeof(buff));
-// 		bzero(buff, sizeof(buff));
-// 	//}
-// }
-
-void upload_rollno(int sockfd, int rollno)
+void upload_result(int sockfd, struct data *d)
 {
 	int ret;
-	char *temp;
-	int length;
+  int length;
+  //struct data_up d_u;
 
-	//printf("result is: %d\n", result);
+//  length = snprintf(NULL, 0, "%d", d->rollno);
+//  d_u.rollno = malloc(length+1);
+//  snprintf(d_u.rollno, length+1, "%d", d->rollno);
 
-	length = snprintf( NULL, 0, "%d", rollno);
-	temp = malloc(length+1);
-	snprintf(temp, length+1, "%d", rollno);
+  //length = snprintf(NULL, 0, "%d", d->result);
+  //d_u.result = malloc(length+1);
+  //snprintf(d_u.result, length+1, "%d", d->result);
 
-	//itoa(result, temp, 10);
-	//sprintf(temp, result, 42);
-	ret = write(sockfd, temp, sizeof(temp));
-	//printf("return of write: %d\n", ret);
-	free(temp);
+//  printf("In client d_u.rollno %s\n", d_u.rollno);
+//  printf("In client d_u.result %s\n", d_u.result);
+
+	//ret = write(sockfd, &d_u, sizeof(d_u));
+  ret = write(sockfd, d, sizeof(d));
+//	printf("return of write: %d\n", ret);
+
 }
 
-void upload_result(int sockfd, int result)
-{
-	int ret;
-	char *temp;
-	int length;
-
-	//printf("result is: %d\n", result);
-
-	length = snprintf( NULL, 0, "%d", result);
-	temp = malloc(length+1);
-	snprintf(temp, length+1, "%d", result);
-
-	//itoa(result, temp, 10);
-	//sprintf(temp, result, 42);
-	ret = write(sockfd, temp, sizeof(temp));
-	//printf("return of write: %d\n", ret);
-	free(temp);
-}
-
-int upload(int rollno, int result)
+int upload(struct data *d)
 {
   start_socket();
 
-	// function for chat
-	upload_rollno(sockfd, rollno);
-	upload_result(sockfd, result);
-	// close the socket
+	printf("In client rollno:%d result:%d\n", d->rollno, d->result);
+  upload_result(sockfd, d);
+
+  // close the socket
 	close(sockfd);
 }

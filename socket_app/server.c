@@ -12,15 +12,13 @@
 #define PORT 8080
 #define SA struct sockaddr
 
-struct node
+struct data
 {
-  //int rollno;
-  char* rollno;
-  char *ipaddress;
-  char *result;
+  int rollno;
+  int result;
 }client;
 
-
+char *client_ip;
 int sockfd, connfd, len;
 struct sockaddr_in servaddr, cli;
 FILE *fptr;
@@ -76,16 +74,17 @@ static void accept_connection()
 	else
 		printf("server acccept the client...\n");
 
-  client.ipaddress = (char *)malloc(MAX*sizeof(char));
-  inet_ntop(AF_INET, &(cli.sin_addr), client.ipaddress, len);
-  printf("client ip:%s\n", client.ipaddress);
+
+  client_ip = (char *)malloc(MAX*sizeof(char));
+  inet_ntop(AF_INET, &(cli.sin_addr), client_ip, len);
+  printf("client ip:%s\n", client_ip);
 
 }
 
 // Function designed for chat between client and server.
 void func(int sockfd)
 {
-  char buff[MAX];
+  //char buff[MAX];
   int count;
 	int i;
 
@@ -93,54 +92,29 @@ void func(int sockfd)
   if(NULL == fptr)
     perror("error in opening file");
 
-  fwrite( "client ipaddress:", sizeof(char), 18, fptr);
-  count = fwrite( client.ipaddress, sizeof(char), 9, fptr);
-  //printf("return value of fwrite is %d\n", count);
-  count = fwrite( "\n", sizeof(char), 1, fptr);
-  //printf("return value of fwrite is %d\n", count);
-
 	// infinite loop for chat
-  //for (i=0;i<5;i++) {
-  //for(; ;){
-		bzero(buff, MAX);
+//  for (i=0;i<2;i++){
+//  for(; ;){
 
+    // appending client IP to the file
+    fwrite( "client ip:", sizeof(char), 10, fptr);
+    fwrite( client_ip, sizeof(char), 9, fptr);
 		// read the message from client and copy it in buffer
-		read(sockfd, buff, sizeof(buff));
-    printf("buff %s\n", buff);
 
-    client.rollno = (char*)malloc(MAX*sizeof(char));
-    // client.rollno = atoi(buff);
-    client.rollno = buff;
-    // print buffer which contains the client contents
-    printf("client rollno: %s\n", client.rollno);
+    read(sockfd, &client, sizeof(client));
+    printf("In server rollno: %d result: %d\n", client.rollno, client.result);
 
     // appending to the file
-    fwrite( "client rollno:", sizeof(char), 15, fptr);
-    count = fwrite( client.rollno,sizeof(char),4, fptr);
-    printf("return value of fwrite is %d\n", count);
-    count = fwrite( "\n", sizeof(char), 1, fptr);
-    printf("return value of fwrite is %d\n", count);
-		bzero(buff, MAX);
-
-    // read the message from client and copy it in buffer
-    read(sockfd, buff, sizeof(buff));
-    printf("buff %s\n", buff);
-
-    client.result = (char*)malloc(MAX*sizeof(char));
-    // client.rollno = atoi(buff);
-    client.result = buff;
-    // print buffer which contains the client contents
-    printf("client result: %s\n", client.result);
+    fwrite( " client rollno:", sizeof(char), 15, fptr);
+    count = fwrite( &client.rollno,sizeof(int),4, fptr);
 
     // appending to the file
-    fwrite( "client result:", sizeof(char), 15, fptr);
-    count = fwrite( client.result,sizeof(char),4, fptr);
-    printf("return value of fwrite is %d\n", count);
-    count = fwrite( "\n", sizeof(char), 1, fptr);
-    printf("return value of fwrite is %d\n", count);
-    bzero(buff, MAX);
-    //sleep(10);
+    fwrite( " client result:", sizeof(char), 16, fptr);
+    fwrite( &client.result,sizeof(int),4, fptr);
+    fwrite( "\n", sizeof(char), 1, fptr);
+
   //}
+  fclose(fptr);
 }
 
 void initialize_socket()

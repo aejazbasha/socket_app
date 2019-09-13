@@ -5,4 +5,4 @@ all: server.c client.c
 	gcc -g -o main main.c client.o
 
 clean:
-	rm server client main client.o
+	rm server main client.o database.txt
