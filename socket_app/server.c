@@ -7,6 +7,7 @@
 #include <arpa/inet.h>      // inet_addr
 #include <netdb.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #define MAX 8
 #define PORT 8080
@@ -74,46 +75,29 @@ static void accept_connection()
 	else
 		printf("server acccept the client...\n");
 
-
+  // To retrive client IP address
   client_ip = (char *)malloc(MAX*sizeof(char));
   inet_ntop(AF_INET, &(cli.sin_addr), client_ip, len);
-  printf("client ip:%s\n", client_ip);
-
 }
 
 // Function designed for chat between client and server.
 void func(int sockfd)
 {
-  //char buff[MAX];
-  int count;
-	int i;
+  int ret;
+
+  ret = read(sockfd, &client, sizeof(client));
+  if ( -1==ret )
+    perror("Read");
 
   fptr = fopen("database.txt", "a");
   if(NULL == fptr)
     perror("error in opening file");
 
-	// infinite loop for chat
-//  for (i=0;i<2;i++){
-//  for(; ;){
+  printf("client ip %s client rollno: %d result: %d\n", client_ip, client.rollno, client.result);
 
-    // appending client IP to the file
-    fwrite( "client ip:", sizeof(char), 10, fptr);
-    fwrite( client_ip, sizeof(char), 9, fptr);
-		// read the message from client and copy it in buffer
+  // appending client IP to the file
+  fprintf( fptr, "client ip %s\tclient rollno:%d\tclient result:%d\n", client_ip,client.rollno, client.result);
 
-    read(sockfd, &client, sizeof(client));
-    printf("In server rollno: %d result: %d\n", client.rollno, client.result);
-
-    // appending to the file
-    fwrite( " client rollno:", sizeof(char), 15, fptr);
-    count = fwrite( &client.rollno,sizeof(int),4, fptr);
-
-    // appending to the file
-    fwrite( " client result:", sizeof(char), 16, fptr);
-    fwrite( &client.result,sizeof(int),4, fptr);
-    fwrite( "\n", sizeof(char), 1, fptr);
-
-  //}
   fclose(fptr);
 }
 
@@ -122,7 +106,6 @@ void initialize_socket()
   create_socket();
   bind_socket();
   listen_connection();
-  accept_connection();
 }
 
 // Driver function
@@ -130,8 +113,14 @@ int main()
 {
   initialize_socket();
 
-	func(connfd);
+  for(; ;)
+  {
+    accept_connection();
+    func(connfd);
+  }
 
-	// After chatting close the socket
+//	func(connfd);
+
+	// close the socket
 	close(sockfd);
 }

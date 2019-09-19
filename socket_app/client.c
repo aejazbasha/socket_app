@@ -18,12 +18,6 @@ struct data
   int result;
 };
 
-// struct data_up
-// {
-//   char *rollno;
-//   char *result;
-// };
-
 int sockfd;
 struct sockaddr_in servaddr;
 
@@ -69,30 +63,18 @@ void upload_result(int sockfd, struct data *d)
 {
 	int ret;
   int length;
-  //struct data_up d_u;
 
-//  length = snprintf(NULL, 0, "%d", d->rollno);
-//  d_u.rollno = malloc(length+1);
-//  snprintf(d_u.rollno, length+1, "%d", d->rollno);
-
-  //length = snprintf(NULL, 0, "%d", d->result);
-  //d_u.result = malloc(length+1);
-  //snprintf(d_u.result, length+1, "%d", d->result);
-
-//  printf("In client d_u.rollno %s\n", d_u.rollno);
-//  printf("In client d_u.result %s\n", d_u.result);
-
-	//ret = write(sockfd, &d_u, sizeof(d_u));
-  ret = write(sockfd, d, sizeof(d));
-//	printf("return of write: %d\n", ret);
-
+  ret = write(sockfd, d, sizeof(struct data));
+  if ( -1==ret )
+    perror("Write");
+    
 }
 
 int upload(struct data *d)
 {
   start_socket();
 
-	printf("In client rollno:%d result:%d\n", d->rollno, d->result);
+	//printf("In client rollno:%d result:%d\n", d->rollno, d->result);
   upload_result(sockfd, d);
 
   // close the socket
